@@ -10,6 +10,8 @@ Provision is stable because it comes from a long history of automating Drupal ho
 
 The 4.x version is a total rewrite, based on [Symfony Console](https://symfony.com/doc/3.4/console.html) and [Robo](https://robo.li/) components. We are working to make Provision a useful stand-alone command for managing any kind of web app.
 
+{% page-ref page="getting-started.md" %}
+
 ## How it Works
 
 Provision works by abstracting the services needed by your web sites and by knowing how to configure the underlying services automatically. Once setup, you can add new sites simply by telling it a URL and the path to your source code.

@@ -1,7 +1,3 @@
----
-description: How to use start using Provision.
----
-
 # Getting Started
 
 ## Getting Started
@@ -10,7 +6,7 @@ The prerequisites for Provision are:
 
 * PHP-CLI.
 * Composer.
-* A web & database server or Docker and `docker-compose` \(Docker v17.05 or higher\).
+* A web & database server _or_ Docker and `docker-compose` \(Docker v17.05 or higher\).
 
 Since we are still early in development, we recommend installing from source repository at [https://github.com/provision4/provision](https://github.com/provision4/provision).
 
@@ -21,14 +17,6 @@ $ composer install
 $ sudo ln -s $PWD/bin/provision /usr/local/bin/provision
 $ sudo ln -s $PWD/bin/provision /usr/local/bin/pro
 ```
-
-{% hint style="info" %}
-Provision works by writing Apache or NGINX configuration and dynamically creating databases.
-
-This means that Provision works on standard systems where multiple services are running in a single operating system, like your laptop. 
-
-It also works on Docker systems where each service is provided by separate containers, using the same configuration templates.
-{% endhint %}
 
 ### Provision Configuration
 
@@ -152,6 +140,8 @@ When Provision asks you a question, it often offers you a \[Default Value\], whi
 
 So, to create your first server, run the `provision save` command:
 
+{% code-tabs %}
+{% code-tabs-item title="\`\`\`" %}
 ```text
 $ pro save
 
@@ -185,6 +175,8 @@ $ pro save
  > 
 
 ```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
 
 ### Servers & Services
 
@@ -232,4 +224,37 @@ Add a service? (yes/no) [yes]:
  [OK] Service saved to Context!                                                
                                    
 ```
+
+### Native vs Docker
+
+Provision works by writing Apache or NGINX configuration and dynamically creating databases.
+
+Provision works on _native_ systems where multiple services are running in a single operating system, like your laptop or a traditional server.
+
+Provision can also work using _docker_ systems where services are run inside Docker containers launched using _Docker Compose. _
+
+The same configuration files are used for _native_ and _docker _systems.
+
+{% hint style="info" %}
+To use _Docker_ services, select `httpDocker` and `mysqlDocker` when adding services to your server. Otherwise, Provision assumes your services are running natively.
+{% endhint %}
+
+#### Native Services Setup
+
+_Native _services work by linking Provision web server config into your systems Apache or NGINX configuration.
+
+Once you have created a _Server_ context, and added a HTTP service, you will have some a folder and some files created in the `config_path` \(Defaults to `~/.config/provision/$SERVERNAME/apache.conf` or `~/.config/provision/$SERVERNAME/apache.conf`.
+
+Link this file into your host's apache or nginx configuration folders. Every system varies slightly. Edit this command and run it for your system:
+
+```text
+# On MacOS:
+sudo ln -s /Users/$USER/.config/provision/$SERVERNAME/apache.conf /private/etc/apache2/other/provision.conf
+# On Linux (varies by OS)
+sudo ln -s /home/$USER/.config/provision/$SERVERNAME/apache.conf /etc/apache2/conf-enabled/provision.conf
+$ On Linux with NGINX
+sudo ln -s /home/$USER/.config/provision/$SERVERNAME/nginx.conf /etc/nginx/conf.d/provision.conf
+```
+
+### 
 

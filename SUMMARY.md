@@ -4,4 +4,5 @@
 * [Developing Provision](developing-provision.md)
 * [Getting Started](getting-started.md)
 * [Customizing Provision](customizing-provision.md)
+* [Debugging Provision](debugging.md)
 

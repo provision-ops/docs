@@ -256,5 +256,86 @@ $ On Linux with NGINX
 sudo ln -s /home/$USER/.config/provision/$SERVERNAME/nginx.conf /etc/nginx/conf.d/provision.conf
 ```
 
-### 
+### Command: provision verify
+
+Sites and servers get setup after you add the context using the `verify` command.
+
+Run `provision verify` and select your server to check that it has access to everything it needs to launch Drupal:
+
+```bash
+$ provision verify
+
+ Choose a context:
+  [server_master] server server_master
+ > server_master
+
+Verify server: server_master
+============================
+
+
+Verify service: Web Server
+--------------------------
+ ✔ Writing web server configuration... DONE in 0.00s
+ ✔ Checking web server configuration... DONE in 0.35s
+ ✔ Restarting web server... DONE in 0.15s
+```
+
+{% hint style="info" %}
+**TIP: Context Aliases**
+
+When you run any command, if you do not specify a context, Provision will ask which context you would like to run on.
+
+If you already know the context, you can run `provision @CONTEXTNAME verify` to run the command on that context.
+{% endhint %}
+
+### Adding Database Services
+
+In order to rapidly launch a Drupal site, your Provision server context must have a `db` service attached. This service stores the root password of your database server so that Provision can create and destroy databases and assign permissions on the fly.
+
+To add the `db` service to your Server, you can use the `provision services add` command. If you wish to use Docker, make sure to select `mysqlDocker` as your service type.
+
+{% hint style="info" %}
+When Provision asks you for the `master_db` setting, it needs to be in the MySQL DSN format, which looks like a URL. 
+
+If using `mysqlDocker` service, the username and password will be extracted and used to create the containers. You must use `db` as the host.
+
+If using native `mysql` service, the username and password must already be set in the MySQL Server.
+{% endhint %}
+
+```text
+$ provision services add
+pro services add
+
+ Choose a context:
+  [server_master] server server_master
+ > server_master
+
+ Add Services
+
+ Which service?:
+  [db  ] Database Server
+  [http] Web Server
+ > db
+
+ Which service type?:
+  [mysqlDocker] MySQL on Docker
+  [mysql      ] MySQL
+ > mysqlDocker
+
+ master_db (server with db: Master database connection info, {type}://{user}:{password}@{host}):
+ > mysql://root:RANDOMPASSWORD@db
+
+ db_grant_all_hosts (Grant access to site database users from any web host. If set to TRUE, any host will be allowed to connect to MySQL site databases on this server using the generated username and password. If set to FALSE, web hosts will be granted access by their detected IP address.):
+ > 1
+
+ db_port (The port to run the database server on.):
+ > 3307
+
+ Adding db service mysqlDocker...
+
+                                                                          
+ [OK] Service saved to Context! 
+```
+
+
 

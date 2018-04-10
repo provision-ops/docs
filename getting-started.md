@@ -178,7 +178,7 @@ $ pro save
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-### Servers & Services
+### Add Server & Services
 
 A "server" represents the system providing services to a site, such as "web" and "database".
 
@@ -288,7 +288,7 @@ When you run any command, if you do not specify a context, Provision will ask wh
 If you already know the context, you can run `provision @CONTEXTNAME verify` to run the command on that context.
 {% endhint %}
 
-### Adding Database Services
+### Adding Database Service
 
 In order to rapidly launch a Drupal site, your Provision server context must have a `db` service attached. This service stores the root password of your database server so that Provision can create and destroy databases and assign permissions on the fly.
 
@@ -300,6 +300,14 @@ When Provision asks you for the `master_db` setting, it needs to be in the MySQL
 If using `mysqlDocker` service, the username and password will be extracted and used to create the containers. You must use `db` as the host.
 
 If using native `mysql` service, the username and password must already be set in the MySQL Server.
+{% endhint %}
+
+{% hint style="warning" %}
+The `db_grant_all_hosts` setting should be set to 1 if using Docker services.
+{% endhint %}
+
+{% hint style="warning" %}
+The `db_port` option should only be set if you are using Docker and want to expose the database container to be accessible outside the docker-compose cluster. Otherwise, the port in the `master_db`  setting will be used.
 {% endhint %}
 
 ```text
@@ -336,6 +344,175 @@ pro services add
                                                                           
  [OK] Service saved to Context! 
 ```
+
+### Add Site
+
+Now that you have a working Server context providing `db` and `http` services, you can add a site.
+
+Add new sites to your system using the same `provision save` command use for adding servers. When you call `provision save` all by itself, Provision will ask you if you want to update an existing context or create a new one.  
+
+Run `provision save` or `provision add` \(an alias\) to add a new site to your system:
+
+```bash
+pro save
+
+ Choose a context:
+  [server_master] server server_master
+  [new          ] Create a new context.
+ > new
+
+ Context Type?:
+  [server  ] Server
+  [platform] Platform
+  [site    ] Site
+ > site
+
+ Context name:
+ > mskcc.org
+
+ Checking service requirements for context type site...                   
+
+ ✔ Service http: Available
+ ✔ Service db: Available
+
+ uri (site: example.com URI, no http:// or trailing /):
+ > local.mskcc.org
+
+ platform (site: The platform this site is run on. (Optional)):
+ > 
+
+ root (Path to source code. Enter an absolute path or relative to /Users/jon/.config/provision. If path does not exist, it will be created.) [/Users/jon/.config/provision]:
+ > /Users/jon/Projects/mskcc.org/mskcc_composer
+
+ ✔ Using root /Users/jon/Projects/mskcc.org/mskcc_composer
+
+ git_url (platform: Git repository remote URL.):
+ > git@bitbucket.org:mskwebteam/mskcc_build2
+ Checking git remote...
+
+ ✔ Connected to git remote.
+
+ makefile (platform: Drush makefile to use for building the platform. May be a path or URL.):
+ > 
+
+ make_working_copy (platform: Specifiy TRUE to build the platform with the Drush make --working-copy option.):
+ > 
+
+ document_root (platform: Relative path to the "document root" in your source code. Leave blank if docroot is the root.):
+ > web
+ 
+ composer_install_command (The command to run immediately after cloning or pulling new code. If this is a production site, you would should add "--no-dev".) [composer install --no-interaction]:
+ > 
+
+```
+
+{% hint style="info" %}
+It is common practice to set the `contextname` property to the URI of the site, but you can call it whatever you want. 
+
+Don't get confused! Only the URI is used for setting configuration
+{% endhint %}
+
+Some more information on the options:
+
+* `platform` is a reference to a Platform context, which is not required. More documentation on platform usage coming soon.
+* `root` is the full path to the root of your codebase \(the root of the git repository, not the document root\).
+* `git_url` is the full git repository URL for your site. If you enter a git url and the root path does not exist, the site's codebase will be cloned on the first run of `provision verify`.
+* `makefile` is the path to a Drush makefile, if you have one. A URL, absolute path, or relative path inside the `root` is acceptable. Optional.
+* `make_working_copy` should be set to 1 if you want to clone individual projects specified in the makefile. Optional.
+* `document_root` is the relative path to the exposed web root from your git repository root. Most commonly `docroot` or `web`.
+* `composer_install_command` is the command to run from the `root` before verifying the codebase.
+
+### Service Subscriptions
+
+Provision treats Services as the bridge between Servers and Sites. 
+
+Just as you can use the `provision services add` command to tell Provision about a Server's services, you can use the `provision services add` command to assign a site to web and database servers:
+
+#### Database Service Subscription
+
+Services store properties, just like contexts. When you add a DB service to a site, you need to specify options such as `db_name`_, `db_user`_, and `db_password`:
+
+```text
+ $ pro services add
+
+ Choose a context:
+  [server_master] server server_master
+  [mysite.org    ] site mysite.org
+ > mysite.org
+
+ Add Services
+
+ Which service?:
+  [db  ] Database Server
+  [http] Web Server
+ > db
+
+ Which server?:
+  [server_master] server_master: mysqlDocker
+ > server_master
+
+ db_name (The name of the database. Default: Automatically generated.):
+ > dbb
+
+ db_user (The username used to access the database. Default: Automatically generated.):
+ > dbb
+
+ db_password (The password used to access the database. Default: Automatically generated.):
+ > dbb
+
+ Using db service from server server_master...
+
+                                                                          
+ [OK] Service saved to Context!                     
+```
+
+{% hint style="warning" %}
+**WARNING: **Currently Provision does _not_ automatically generate default database credentials, yet. It will soon. 
+
+Please enter anything into db\_name_, _db\_user, and db_\__password, and Provision will use these credentials to create the database and write the settings.php file.
+{% endhint %}
+
+Adding a http server to a site is simpler, there are no options:
+
+```bash
+$ pro services add
+
+ Choose a context:
+  [server_master] server server_master
+  [mysite.org    ] site mysite.org
+ > mysite.org
+
+ Add Services
+
+ Which service?:
+  [db  ] Database Server
+  [http] Web Server
+ > http
+
+ Which server?:
+  [server_master] server_master: apacheDocker
+ > server_master
+
+ Using http service from server server_master...
+
+                                                                          
+ [OK] Service saved to Context!              
+```
+
+### Finally... Site Verify!
+
+If your server context verifies, and you have added your site and assigned services, you can now run `provision verify` on the site context and Provision will:
+
+1. Clone your site codebase to the set root.
+2. Run `composer install` \(Not yet functional\)
+3. Create a database, create a user and set permissions.
+4. Write credentials to your settings.php.
+5. Write a web server virtualhost configuration file.
+6. Change permissions of your sites/default/files folder and more to appropriate defaults.
+
+As long as the URI you have chosen resolves to the IP address of the computer you are using, you should be able to load the website now!
+
+
 
 
 

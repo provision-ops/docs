@@ -47,3 +47,50 @@ ServerContext "provide" services, while all others "subscribe" to them.
 
 Use `ServerContext::shell_exec()` to easily run commands in the Server's config directory, while hiding output, throwing exception with error messages, and showing output when running with `-v`.
 
+## Steps
+
+To create the list of things that run during a provision\_verify There is a class called "Provision\Step".
+
+An Example: 
+
+```php
+use Aegir\Provision\Step;
+$steps['coinflip'] = Step::create()
+    // Sets a character other than ☐ as the starting prefix.
+    // Useful if you know your step will output lines and the ☐ doesn't look right.
+    ->startPrefix('💲')
+
+    // The message to display when the step starts.
+    ->start('Flipping a coin...')
+
+    // The message to display if the steps execute successfully.
+    ->success('Win!')
+
+    // The message to display if the steps fail. (The string "FAILED in 1s" will be appended).
+    ->failure("Lose!")
+
+    // The code to execute for the step.
+    // This can be a callable (a function string or anonymous function)
+    // Or it can be a Robo Task or Robo Collection.
+    // if using a callable, must return an exit code (0 for success)
+    ->execute(function (){
+        $choices = ['head', 'tail'];
+
+        $choice = $this->getProvision()->io()->choice('Heads or Tails?', $choices);
+        $this->getProvision()->io()->warningLite("You chose " . $choice);
+
+        foreach ([3,2,1] as $countdown) {
+            $this->getProvision()->io()->bulletLite('Flipping a coin in ' . $countdown);
+            sleep(1);
+        }
+        $flip = rand(0,1);
+        $this->getProvision()->io()->warningLite('Coin landed on: ' . $choices[$flip]);
+
+        return $choice == $choices[$flip]? 0: 1;
+    });
+```
+
+This code results in the following output:
+
+![](.gitbook/assets/apr-13-2018-10_21-am-edited.gif)
+

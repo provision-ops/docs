@@ -1,15 +1,30 @@
 # Customizing Provision
 
-## Docker Services
+We are trying to make Provision as easy to customize as possible.
+
+### Custom Docker Services
 
 When using Provision's Docker services, a docker-compose.yml file is automatically generated, using pre-built images for Database & Web servers.
 
 Each server has a "config path" where all server configuration is stored, such as apache config. Check `provision status` for the server config path. The server config folder is filled with files. Most files are generated automaticaly by provision verify. You can create the files labelled \(Optional\) below to customize the behavior of this server's stack.
 
+After adding a "server context", you must then attach "services" so Provision has the information it needs to work. Use the `provision services add` command to add services to your server context.
+
+### Use your own docker-compose.yml file.
+
+If you wish to just use your own docker-compose.yml file, you can! Just create a server with no services, and put your own `docker-compose.yml` file in the server_config_path, and `provision verify` will detect it and run `docker-compose up -d`.
+
+# Server Config Path
+
+Each server context has a directory created for it to store all of the server configuration files.
+
+This path is called the `server_config_path` and can look something like this:
+
 ```text
 ~/.config/provision/$SERVER_NAME
    /.env                            # Generated on provision verify. Includes the COMPOSE_FILE variable to include all found docker-compose yml files.
    /.env-custom                     # (Optional) Included in .env when it is generated. See https://docs.docker.com/compose/reference/envvars/ for available environment variables.
+   /docker-compose.yml              # (Optional) Put your own docker-compose.yml here instead of using Provision services.
    /docker-compose-provision.yml    # Generated on provision verify
    /docker-compose*.yml             # (Optional) Additional files named docker-compose*.yml are detected and written to .env, so any calls to docker-compose in this directory load all files. 
    /.provision.yml                  # (Optional) YML file with hooks to run on verify.  

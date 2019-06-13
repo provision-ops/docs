@@ -26,7 +26,7 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="1"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="382.42725"
@@ -74,7 +74,10 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.71629333px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.5429107">ProvisionOps</tspan></text>
     <g
        id="g5114"
-       transform="matrix(0.76639584,0,0,0.76639584,-18.887362,13.885755)">
+       transform="matrix(0.76639584,0,0,0.76639584,-18.887362,13.885755)"
+       inkscape:export-filename="provision-ops-logo.png"
+       inkscape:export-xdpi="280.33099"
+       inkscape:export-ydpi="280.33099">
       <path
          style="fill:#fde6b4;stroke-width:0.2113084"
          d="m 54.771813,124.21786 c -0.580492,-0.24469 -1.299984,-1.05551 -1.570737,-1.7701 -0.132847,-0.35063 -0.226483,-2.38944 -0.228061,-4.96575 l -0.0026,-4.37089 -0.631249,-1.24481 c -1.523377,-3.00405 -0.292823,-5.97136 3.153581,-7.6044 l 1.392227,-0.65969 h 7.29014 7.29014 l 1.392227,0.65969 c 3.446404,1.63304 4.676958,4.60035 3.153582,7.6044 l -0.631251,1.24481 -0.0026,4.39143 c -0.0029,4.75716 -0.104661,5.31067 -1.154485,6.27964 l -0.57235,0.52828 -9.227898,0.0428 c -5.075344,0.0235 -9.418075,-0.0374 -9.650514,-0.13538 z"
